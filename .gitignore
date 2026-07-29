@@ -1,4 +1,4 @@
 /note.txt
 /LearnOpenGL.code-workspace
-build
-bin
+build/
+bin/
