@@ -1,0 +1,21 @@
+CMakeFiles/LearnOpenGL.dir/src/main.cpp.obj: \
+ D:\Files\LearnOpenGL\src\main.cpp \
+ D:/Files/LearnOpenGL/include/glad/glad.h \
+ D:/MinGW/x86_64-w64-mingw32/include/KHR/khrplatform.h \
+ D:/MinGW/lib/gcc/x86_64-w64-mingw32/15.1.0/include/stdint.h \
+ D:/MinGW/x86_64-w64-mingw32/include/stdint.h \
+ D:/MinGW/x86_64-w64-mingw32/include/crtdefs.h \
+ D:/MinGW/x86_64-w64-mingw32/include/corecrt.h \
+ D:/MinGW/x86_64-w64-mingw32/include/_mingw.h \
+ D:/MinGW/x86_64-w64-mingw32/include/_mingw_mac.h \
+ D:/MinGW/x86_64-w64-mingw32/include/_mingw_secapi.h \
+ D:/MinGW/x86_64-w64-mingw32/include/vadefs.h \
+ D:/MinGW/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
+ D:/MinGW/lib/gcc/x86_64-w64-mingw32/15.1.0/include/stddef.h \
+ D:/MinGW/x86_64-w64-mingw32/include/stddef.h \
+ D:/Files/LearnOpenGL/external/glfw/include/glfw/glfw3.h \
+ D:/MinGW/x86_64-w64-mingw32/include/stdio.h \
+ D:/MinGW/x86_64-w64-mingw32/include/corecrt_stdio_config.h \
+ D:/MinGW/x86_64-w64-mingw32/include/_mingw_off_t.h \
+ D:/MinGW/x86_64-w64-mingw32/include/swprintf.inl \
+ D:/MinGW/x86_64-w64-mingw32/include/sec_api/stdio_s.h

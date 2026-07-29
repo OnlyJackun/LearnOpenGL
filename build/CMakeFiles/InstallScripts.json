@@ -1,0 +1,10 @@
+{
+	"InstallScripts" : 
+	[
+		"D:/Files/LearnOpenGL/build/cmake_install.cmake",
+		"D:/Files/LearnOpenGL/build/external/glfw/cmake_install.cmake",
+		"D:/Files/LearnOpenGL/build/external/glfw/src/cmake_install.cmake",
+		"D:/Files/LearnOpenGL/build/external/glfw/docs/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
