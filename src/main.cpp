@@ -26,12 +26,21 @@ int main()
     glfwSetFramebufferSizeCallback(window, changeViewport);
     glfwSetErrorCallback(reportError);
 
+    void processInput(GLFWwindow *window);
+
     while (!glfwWindowShouldClose(window))
     {
+        processInput(window);
+
+        glClearColor(0.4f, 00.8f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    // release resoureces, exit properly
+    glfwTerminate();
     return 0;
 }
 
@@ -43,4 +52,9 @@ void changeViewport(GLFWwindow *window, int width, int height)
 void reportError(int error, const char *description)
 {
     fprintf(stderr, "error: %s\n", description);
+}
+
+void processInput(GLFWwindow *window)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
 }
