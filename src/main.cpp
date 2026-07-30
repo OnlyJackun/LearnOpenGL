@@ -34,33 +34,14 @@ int main()
     void processInput(GLFWwindow * window);
 
     // =========================================
-
-    GLfloat vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f};
-
-    // vertex buffer object, 可以是array, 代表连续多个
-    GLuint VBO;
-    // 个数要与VBO/VBO[]长度相同
-    // VBO用于存生成的buffer的地址
-    glGenBuffers(1, &VBO);
-    // 将VBO里存的地址所对应的buffer设为GL_ARRAY_BUFFER
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // 上一步VBO所存地址所对应的buffer才被设为GL_ARRAY_BUFFER
-    // 故此时GL_ARRAY_BUFFER特指VBO所存地址所对应的buffer
-    // the fourth parameter:
-    // GL_STREAM_DRAW: the data is set only once and used by the GPU at most a few times.
-    // GL_STATIC_DRAW: the data is set only once and used many times.
-    // GL_DYNAMIC_DRAW: the data is changed a lot and used many times.
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // 编译着色器
 
     const GLchar *vertexShaderSource = R"(
         #version 330 core
         layout (location = 0) in vec3 position;
         void main()
         {
-            GLPosition = vec4(position.x, position.y, position.z, 1.0);
+            gl_Position = vec4(position.x, position.y, position.z, 1.0);
         }
     )";
     GLuint vertexShader;
@@ -88,7 +69,7 @@ int main()
         out vec4 FragColor;
         void main()
         {
-            FragColor = ver4(0.0f,0.0f, 0.93f, 1.0f);
+            FragColor = vec4(0.93f,0.0f, 0.0f, 1.0f);
         }
     )";
     GLuint fragmentShader;
@@ -109,12 +90,55 @@ int main()
         fprintf(stderr, "shader program linking errer: %s", info);
         return -1;
     }
-    
+
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
     // =========================================
-    
+    // 准备数据(存哪&如何访问)
+
+    // vertex attribute object, 记录一个VBO及其所对应的数据的访问规则
+    // 须在bind这个VBO为GL_ARRAY_BUFFER之前
+    GLuint VAO1;
+    glGenVertexArrays(1, &VAO1);
+    glBindVertexArray(VAO1);
+
+    // vertex buffer object, 真正存数据的, 可以是array, 代表连续多个
+    GLuint VBO1;
+    // VBO1就只存1, 它的ID
+    glGenBuffers(1, &VBO1);
+    // bind之后, 所有的操作的array buffer默认都是VBO1
+    glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+
+    GLfloat vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f};
+    // the fourth parameter:
+    // GL_STREAM_DRAW: the data is set only once and used by the GPU at most a few times.
+    // GL_STATIC_DRAW: the data is set only once and used many times.
+    // GL_DYNAMIC_DRAW: the data is changed a lot and used many times.
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // 配置vertex array格式
+    // 配置到端口0(与顶点着色器相同)
+    // 3维, GL_FLOAT类型, 不归一化
+    // 相邻顶点间数据头部间隔长度, first数据相对数组头部的距离
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *)0);
+    // 启用端口0, 这才传输数据, 可以只配置不启用
+    glEnableVertexAttribArray(0);
+
+    // 解绑VAO1, 终止记录
+    glDisableVertexAttribArray(VAO1);
+
+    // ===========================================
+    // 渲染
+
+    // 选择着色器
+    glUseProgram(shaderProgram);
+    // 绑定数据并配置访问方式(均记录在VAO1)
+    glBindVertexArray(VAO1);
+
     // =========================================
 
     while (!glfwWindowShouldClose(window))
@@ -123,6 +147,9 @@ int main()
 
         glClearColor(0.4f, 00.8f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        // 从第0个顶点开始画, 用3个顶点
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
