@@ -1,5 +1,5 @@
 #include "glad/glad.h" //有坑，glfw3.h里包含的头文件再包含会报错，须在最前
-#include "glfw/glfw3.h"
+#include "GLFW/glfw3.h"
 #include <stdio.h>
 
 int main()
@@ -8,10 +8,10 @@ int main()
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // opengl需要一个具体的上下文，要先create window再立即绑context
-    GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL_hello_triangle", nullptr, nullptr);
     if (!window)
     {
         fprintf(stderr, "fail to create window");
@@ -41,7 +41,7 @@ int main()
         layout (location = 0) in vec3 position;
         void main()
         {
-            gl_Position = vec4(position.x, position.y, position.z, 1.0);
+            gl_Position = vec4(position.x, position.y, position.z, 1.0f);
         }
     )";
     GLuint vertexShader;
@@ -51,6 +51,8 @@ int main()
     // 然后向opengl传该array的指针
     // 由opengl从该array读取拼接编译
     // 1用来指明array长度
+    // 第四个参数为着色器源码字符串长度(结尾没有\0时一定要算出来填上,
+    // 有\0时可填可不填, 不填由gpu算长度, 填上则是直接读)
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
 
@@ -98,7 +100,6 @@ int main()
     // 准备数据(存哪&如何访问)
 
     // vertex attribute object, 记录一个VBO及其所对应的数据的访问规则
-    // 须在bind这个VBO为GL_ARRAY_BUFFER之前
     GLuint VAO1;
     glGenVertexArrays(1, &VAO1);
     glBindVertexArray(VAO1);
@@ -110,20 +111,37 @@ int main()
     // bind之后, 所有的操作的array buffer默认都是VBO1
     glBindBuffer(GL_ARRAY_BUFFER, VBO1);
 
-    GLfloat vertices[] = {
-        -0.5f, -0.5f, 0.0f,
+    // GLfloat triangleVertices[] = {
+    //     -0.5f, -0.5f, 0.0f,
+    //     0.5f, -0.5f, 0.0f,
+    //     0.0f, 0.5f, 0.0f};
+    GLfloat rectangleVertices[] = {
+        -0.5f, -0.5f, 0.0,
         0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f};
+        0.5f, 0.5f, 0.0f,
+        -0.5f, 0.5f, 0.0f};
+
+    GLuint rectangleIndices[] = {
+        0, 2, 1,
+        0, 2, 3};
+
+    GLuint EBO1;
+    glGenBuffers(1, &EBO1);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO1);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectangleIndices), rectangleIndices, GL_STATIC_DRAW);
+
     // the fourth parameter:
     // GL_STREAM_DRAW: the data is set only once and used by the GPU at most a few times.
     // GL_STATIC_DRAW: the data is set only once and used many times.
     // GL_DYNAMIC_DRAW: the data is changed a lot and used many times.
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleVertices), rectangleVertices, GL_STATIC_DRAW);
 
     // 配置vertex array格式
     // 配置到端口0(与顶点着色器相同)
     // 3维, GL_FLOAT类型, 不归一化
     // 相邻顶点间数据头部间隔长度, first数据相对数组头部的距离
+    // 须在bindVBO和EBO之后, 这样VBO和EBO才会被记录
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *)0);
     // 启用端口0, 这才传输数据, 可以只配置不启用
     glEnableVertexAttribArray(0);
@@ -138,6 +156,8 @@ int main()
     glUseProgram(shaderProgram);
     // 绑定数据并配置访问方式(均记录在VAO1)
     glBindVertexArray(VAO1);
+    // 正反面都只画顶点之间的线
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // =========================================
 
@@ -149,7 +169,9 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // 从第0个顶点开始画, 用3个顶点
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        // glDrawArrays(GL_TRIANGLES, 0, 3);
+        // 按照索引画, 一共要6个顶点, 索引的数据类型是GLuint, 第一个索引的offset为0
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
