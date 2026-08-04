@@ -9,7 +9,7 @@ include_directories(include)
 add_subdirectory(external/glfw)
 
 add_executable(${PROJECT_NAME}
-    src/LearnOpenGL_hello_triangle_exercise.cpp
+    src/LearnOpenGL_hello_triangle/LearnOpenGL_hello_triangle_exercise.cpp
     src/glad.c
 )
 
@@ -25,5 +25,5 @@ if(WIN32)
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/LearnOpenGL_hello_triangle
 )

@@ -140,7 +140,7 @@ int main()
     // 配置vertex array格式
     // 配置到端口0(与顶点着色器相同)
     // 3维, GL_FLOAT类型, 不归一化
-    // 相邻顶点间数据头部间隔长度, first数据相对数组头部的距离
+    // 一份顶点数据(包括坐标,颜色)长度stride, 一份顶点数据中坐标,颜色等子数据的offset
     // 须在bindVBO和EBO之后, 这样VBO和EBO才会被记录
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *)0);
     // 启用端口0, 这才传输数据, 可以只配置不启用
